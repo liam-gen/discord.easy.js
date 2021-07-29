@@ -64,7 +64,7 @@ bot.on('message', (message, author, channel, args, command) => {
     }
 
     if (command === "ban"){
-        message.makeKick("I have banned $user!", "BAN_MEMBERS") // The done message is optionnal. $user will be replaced by the mention of the banned user. The default permission is BAN_MEMBERS
+        message.makeBan("I have banned $user!", "BAN_MEMBERS") // The done message is optionnal. $user will be replaced by the mention of the banned user. The default permission is BAN_MEMBERS
     }
 
     /* More examples : https://github.com/liam-gen/discord.easy.js/blob/main/examples.md */
