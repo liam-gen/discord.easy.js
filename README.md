@@ -82,7 +82,7 @@ My discord : liamgen#7777
 
 ### Dev logs 
 
-v1.0.4 - <DATE A METTRE ICI>
+v1.0.4 - 29/07/27 at 5:19
 #### en - EN
 - Create moderation commands
 - Message arguments are not required
