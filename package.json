@@ -1,6 +1,6 @@
 {
   "name": "discord.easy.js",
-  "version": "1.0.3",
+  "version": "1.0.4",
   "description": "discord.easy.js is a library using discord.js and nodejs to code your bot more easily",
   "main": "index.js",
   "scripts": {
