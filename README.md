@@ -67,7 +67,7 @@ bot.on('message', (message, author, channel, args, command) => {
         message.makeKick("I have banned $user!", "BAN_MEMBERS") // The done message is optionnal. $user will be replaced by the mention of the banned user. The default permission is BAN_MEMBERS
     }
 
-    /* More : https://github.com/liam-gen/discord.easy.js/examples.md */
+    /* More examples : https://github.com/liam-gen/discord.easy.js/blob/main/examples.md */
 })
 
 bot.setStatus('Powered by discord.easy.js') // Set the bot status
