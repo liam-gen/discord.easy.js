@@ -141,3 +141,68 @@ message.errorMessage('A error test') // Return a embed error in channel of messa
 ```js
 message.translate()
 ```
+
+## Events
+
+### Start
+
+```js
+bot.on('start', client => {
+        console.log(`${client.tag} is logged!`)
+})
+```
+
+### Message
+
+```js
+bot.on('message', (message, author, channel, args, command, util)){
+        if (command === "ping"){
+                message.channel.send("Pong!")
+        }
+}
+```
+
+### giveawayStart
+
+```js
+bot.on('giveawayStart', (giveaway, channel) => {
+        channel.send(`I started a giveaway in the channel ${channel}`)
+})
+```
+
+### giveawayEnd
+
+```js
+bot.on('giveawayEnd', (giveaway, winners, prize) => {
+        if (!winners) return
+        winners.forEach((member) => {
+                member.send('Congratulations, '+member.user.username+', you won: '+prize);
+        });
+})
+```
+
+### giveawayReactionAdd
+
+```js
+bot.on('giveawayReactionAdd', (giveaway, member, reaction, prize) => {
+        member.send(`Hey ${member.tag}! You reacted well to the giveaway ${reaction.emoji}. You might have a chance to win \`${prize}\``)
+})
+```
+
+### giveawayReactionRemove
+
+```js
+bot.on('giveawayReactionRemove', (giveaway, member, reaction, prize) => {
+        member.send(`Hey ${member.tag}! Are you sure you want to leave the giveaway?`)
+})
+```
+
+### giveawayReroll
+
+```js
+bot.on('giveawayReroll', (giveaway, winners, prize) => {
+        winners.forEach((member) => {
+                member.send('Congratulations, '+member.user.username+', you won: '+prize);
+     });
+})
+```

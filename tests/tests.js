@@ -7,14 +7,14 @@ async function sleep(ms) {
 }
 
 
-const bot = new discord.Bot('fr', '!') // The prefix is ​​optional but is required to use arguments and command
+const bot = new discord.Bot('fr', '!')
 
 bot.on('start', client => {
-    console.log(client.tag) // When the bot is ready, it will send the username and discriminator in your console
+    console.log(client.tag) 
 })
 
-bot.on('message', (message, author, channel, args, command) => {
-    if(author.bot) return // If author of message is a bot then we stop the code
+bot.on('message', (message, author, channel, args, command, util) => {
+    if(author.bot) return 
 
     /* Embed example */
     if(command === "embed"){
@@ -24,7 +24,7 @@ bot.on('message', (message, author, channel, args, command) => {
     /* Ping example */
     if(command === "ping"){
         message.send("My latency is `$ping`ms")
-        message.errorMessage('Ceci est une erreur')
+        message.errorMessage('Here it\'s error')
     }
 
     /* Say example */
@@ -62,6 +62,31 @@ bot.on('message', (message, author, channel, args, command) => {
         message.translate()
     }
 
+    if (command === "clear"){
+        message.makeClear()
+    }
+
+    if (command === "s-info"){
+        let info = util.serverinfo.guild
+        message.send(`Name: ${info.name}, members: ${info.memberCount}, bots: ${info.bots}, icon: ${info.icon}, emojisCount: ${info.emojiCount}, created: ${info.created}`)
+    }
+
+})
+
+bot.on('giveawayReactionAdd', (giveaway, member, reaction, prize) => {
+    member.send(`Hey ${member.tag}! Vous avez bien réagis au giveaway ${reaction.emoji}. Vous avez peut être une chance de gagner \`${prize}\``)
+})
+
+bot.on("giveawayEnd", (giveaway, winners, prize) => {
+    if(!winners) return
+    winners.forEach((member) => {
+        member.send('Congratulations, '+member.user.username+', you won: '+prize);
+    });
+})
+
+bot.on("giveawayStart", (giveaway, channel) => {
+    console.log('go')
+    channel.send(`Vous avez bien créer un giveaway dans le salon ${channel}! Le prix est ${giveaway.prize} et la durée est de ${giveaway.time}`)
 })
 
 
@@ -73,6 +98,6 @@ bot.on('message', async(message) => {
     }
 })
 
-bot.setStatus('Je suis un bot qui marche ...') // Set the bot status
+bot.setStatus('I\'m a good bot') 
 
-bot.login('ODMyOTUwNTA1NDA2OTg4MzYw.YHrPmw.RBv_kYbpjH6NnuugWK9JtE4GCdw')
+bot.login('ODEyNDMwODk0Njc2NTc0MjQ4.YDApOw.9pMNs_wCnWKIYijiHRWsMFM_JdU')

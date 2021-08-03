@@ -64,10 +64,10 @@ bot.on('message', (message, author, channel, args, command) => {
     }
 
     if (command === "ban"){
-        message.makeKick("I have banned $user!", "BAN_MEMBERS") // The done message is optionnal. $user will be replaced by the mention of the banned user. The default permission is BAN_MEMBERS
+        message.makeBan("I have banned $user!", "BAN_MEMBERS") // The done message is optionnal. $user will be replaced by the mention of the banned user. The default permission is BAN_MEMBERS
     }
 
-    /* More : https://github.com/liam-gen/discord.easy.js/examples.md */
+    /* More : https://github.com/liam-gen/discord.easy.js/blob/main/examples.md */
 })
 
 bot.setStatus('Powered by discord.easy.js') // Set the bot status
@@ -82,29 +82,22 @@ My discord : liamgen#7777
 
 ### Dev logs 
 
-v1.0.4 - <DATE A METTRE ICI>
+
+## v1.0.6 - 03/08/2021 at 3:30
 #### en - EN
-- Create moderation commands
-- Message arguments are not required
-- Create the giveaways system
-- Translate all commands
-- Create a translator where the user defines a bot language
-- Optimizations of some commands
-- Added optional permissions for some commands
+- Added new events for giveaways
+- Added a "utils" element in the call to the message event
+- Added the clear command
 - Fixed some bugs
-- Added functions to set the bot prefix and language
-- Addition of a limitation of the prefix characters
-- Added a function that checks if the language exists
+- Optimizations of some commands
+- Removed the discord-giveaways module
+- We are now independent of the discord-giveaways module
 
 #### fr - FR
-- Création de commandes de modération
-- Les arguments du message ne sont plus requis 
-- Créer le système de cadeaux
-- Traduire toutes les commandes
-- Créer un traducteur où l'utilisateur définit un langage du bot
-- Optimisations de certaines commandes
-- Ajout d'autorisations facultatives pour certaines commandes
+- Ajout de nouveaux évènements pour les cadeaux
+- Ajout d'un élément "utils" dans l'appel de l'évènement message
+- Ajout de la commande clear
 - Correction de quelques bugs
-- Ajout de fonctions pour définir le préfix et la langue du bot
-- Ajout d'une limitation des caractères du préfix
-- Ajout d'une fonction qui check si la langue existe
+- Optimisations de certaines commandes
+- Supression du module discord-giveaways
+- Nous sommes maintenant indépendant du module discord-giveaways

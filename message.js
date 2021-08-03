@@ -1,7 +1,6 @@
 const { Message, MessageEmbed } = require('discord.js')
 const { MessageButton } = require('discord-buttons')
 const { Embed } = require('./embed')
-const { GiveawaysManager } = require('discord-giveaways');
 const ms = require('ms')
 const translate = require('@vitalets/google-translate-api');
 const { isSupported } = require('./langs')
@@ -63,6 +62,7 @@ Message.prototype.command = async function(command){
 
 Message.prototype.makeSay = async function(noArgsMsg=":x: You must fill in arguments."){
     let args = this.content.slice(this.client.prefix || "").trim().split(/ +/g);
+    let command = args.shift().toLowerCase()
     if(!args[0]) return this.channel.send(noArgsMsg)
     this.delete()
     this.channel.send(args.join(" "))
@@ -74,6 +74,7 @@ Message.prototype.makeKick = async function(kickMessage="I have kicked $user", p
         return this.channel.send(":x: "+translatedPermission.text)
     }
     let args = this.content.slice(this.client.prefix || "").trim().split(/ +/g);
+    let command = args.shift().toLowerCase()
     const user = this.mentions.users.first()
     const reason = (args.splice(1).join(' ') || 'No reason given.')
     if (user){
@@ -93,6 +94,7 @@ Message.prototype.makeBan = async function(banMessage="I have banned $user", per
         return this.channel.send(":x: "+translatedPermission.text)
     }
     let args = this.content.slice(this.client.prefix || "").trim().split(/ +/g);
+    let command = args.shift().toLowerCase()
     const user = this.mentions.users.first()
     const reason = (args.splice(1).join(' ') || 'No reason given.')
     if (user){
@@ -108,6 +110,7 @@ Message.prototype.makeBan = async function(banMessage="I have banned $user", per
 
 Message.prototype.makeStartGiveaway = async function(permission, doneMsg="I started a giveaway in the channel $channel"){
     let args = this.content.slice(this.client.prefix || "").trim().split(/ +/g);
+    let command = args.shift().toLowerCase()
     if(permission && !this.member.hasPermission(permission)){
         let translatedPermission = await translate("You don't have the required permissions to use this command", {to: this.client.lang})
         return this.channel.send(":x: "+translatedPermission.text)
@@ -121,7 +124,7 @@ Message.prototype.makeStartGiveaway = async function(permission, doneMsg="I star
     if (!args[1]) return this.channel.send(":x: "+noWinners.text)
     let noPrice = await translate('You must specify a price', {to: this.client.lang})
     if (!args[2]) return this.channel.send(":x: "+noPrice.text)
-    this.client.giveawaysManager.start(this.channel, {
+    let optionsGiveaway = {
         time: ms(args[0]),
         winnerCount: parseInt(args[1]),
         prize: args.slice(2).join(' '),
@@ -144,13 +147,15 @@ Message.prototype.makeStartGiveaway = async function(permission, doneMsg="I star
                 pluralS: false // Not needed, because units end with a S so it will automatically removed if the unit value is lower than 2
             }
         }
-    })
+    }
+    this.client.giveawaysManager.start(this.channel, optionsGiveaway)
     let finnalyMsg = doneMsg.replace('$channel', `${this.channel}`)
     this.channel.send(finnalyMsg)
 }
 
 Message.prototype.makeRerollGiveaway = async function(permission, doneMsg="Giveaway rerolled!"){
     let args = this.content.slice(this.client.prefix || "").trim().split(/ +/g);
+    let command = args.shift().toLowerCase()
     if(permission && !this.member.hasPermission(permission)){
         let translatedPermission = await translate("You don't have the required permissions to use this command", {to: this.client.lang})
         return this.channel.send(":x: "+translatedPermission.text)
@@ -186,6 +191,7 @@ Message.prototype.makeRerollGiveaway = async function(permission, doneMsg="Givea
 
 Message.prototype.makeEndGiveaway = async function(permission, doneMsg="Giveaway will end in less than $time seconds..."){
     let args = this.content.slice(this.client.prefix || "").trim().split(/ +/g);
+    let command = args.shift().toLowerCase()
     if(permission && !this.member.hasPermission(permission)){
         let translatedPermission = await translate("You don't have the required permissions to use this command", {to: this.client.lang})
         return this.channel.send(":x: "+translatedPermission.text)
@@ -222,7 +228,34 @@ Message.prototype.makeEndGiveaway = async function(permission, doneMsg="Giveaway
     });
 }
 
+Message.prototype.makeClear = async function(permission="MANAGE_MESSAGES", doneMsg="Successfully deleted $messages messages"){
+    let args = this.content.slice(this.client.prefix || "").trim().split(/ +/g);
+    let command = args.shift().toLowerCase()
+    if(!this.member.hasPermission(permission)){
+        let translatedPermission = await translate("You don't have the required permissions to use this command", {to: this.client.lang})
+        return this.channel.send(":x: "+translatedPermission.text)
+    }
+    let noArgsOne = await translate("Please enter the amount of messages to clear!", {to: this.client.lang })
+    if (!args[0]) return this.channel.send(":x: "+noArgsOne.text);
+    let isNaNMsg = await translate("Please type a real number!", {to: this.client.lang})
+            if (isNaN(args[0])) return this.channel.send(":x: "+isNaNMsg.text);
+            let isMore100 = await translate("You can't remove more than 100 messages at once!", { to: this.client.lang})
+            if (args[0] > 100) return this.channel.send(":x: "+isMore100.text);
+            let isLeastOne = await translate("You have to delete at least one message!", { to: this.client.lang})
+            if (args[0] < 1) return this.channel.send(":x: "+isLeastOne.text);
+
+            await this.channel.messages.fetch({ limit: args[0] }).then(async(messages) => {
+                await this.channel.bulkDelete(messages);
+                let replace = doneMsg.replace("$messages", `${args[0]}`)
+                await this.channel.send(replace)
+                    .then(msg => {
+                        msg.delete({ timeout: 3000 })
+                    })
+            });
+        } 
+
 Message.prototype.isSupportedLanguage = async function(lang){
+    if (!lang) return
     return isSupported(lang)
 }
 
@@ -242,5 +275,6 @@ Message.prototype.setPrefix = async function(prefix){
 
 Message.prototype.translate = async function(){
     let args = this.content.slice(this.client.prefix || "").trim().split(/ +/g);
+    let command = args.shift().toLowerCase()
     translate(args.splice(3).join(' '), {from: args[1], to: args[2]}).then((res) => this.channel.send(res.text)).catch((e) => console.log(e))
 }
